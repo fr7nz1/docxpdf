@@ -6,53 +6,31 @@ import os
 paths = []
 
 
-def searchDocx():
+def search():
     for file in os.listdir(os.getcwd()):
         if file.endswith('.docx'):
             paths.append(file)
 
 
-def propertiesDocx(file, path):
+def properties(file, path):
     properties = file.core_properties
     print('Наименование документа:', path)
     print('Автор документа:', properties.author)
     print('Дата и время создания документа:', properties.created, '\n')
 
 
-def marginDocx(file):
-    sections = file.sections
-    print('Поля:')
-    for section in sections:
-        check_margin(section.top_margin, 2.0, 'Верхнее')
-        check_margin(section.bottom_margin, 2.0, 'Нижнее')
-        check_margin(section.left_margin, 3.0, 'Левое')
-        check_margin(section.right_margin, 1.5, 'Правое')
-    print('\n')
-
-#def text_formatting(file):
-#    paragraphs = file.paragraphs
-#    for paragraph in paragraphs:
-#        formatting = paragraph.paragraph_format
-
-
-def check_text_formatting(file):
-    print('Отступы первой строки:')
-    for paragraph in file.paragraphs:
-        formatting = paragraph.paragraph_format
-        if formatting.first_line_indent != 0 and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
-            print(paragraph.text, ' ✕ (Отступ первой строки заголовка должен быть 0см!)')
-        elif round(formatting.first_line_indent.cm, 2) == 1.25 or paragraph.text == '':
-            continue
-        elif formatting.first_line_indent == 0 and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
-            continue
-        else:
-            print(paragraph.text, ' ✕ (Отступ первой строки абзаца должен быть 1.25см!)', formatting.space_before.pt)
-    print('\n')
-
-
-        # print('Отступ после абзаца:', formatting.space_after)
-        # print('Отступ слева:', formatting.left_indent)
-        # print('Отступ справа:', formatting.right_indent)
+def margin(file):
+    try:
+        sections = file.sections
+        print('Поля:')
+        for section in sections:
+            check_margin(section.top_margin, 2.0, 'Верхнее')
+            check_margin(section.bottom_margin, 2.0, 'Нижнее')
+            check_margin(section.left_margin, 3.0, 'Левое')
+            check_margin(section.right_margin, 1.5, 'Правое')
+        print('\n', end='')
+    except Exception as exc:
+        print('Ошибка margin!')
 
 
 def check_margin(margin, expected_value, name):
@@ -65,15 +43,39 @@ def check_margin(margin, expected_value, name):
         print('Ошибка check_margin!')
 
 
+def text_formatting(file):
+    try:
+        print('Отступы первой строки:', end='')
+        paragraphs = file.paragraphs
+        for paragraph in paragraphs:
+            formatting = paragraph.paragraph_format
+            check_text_formatting(formatting.first_line_indent, paragraph.alignment, paragraph.text, 1.25)
+        print('\n')
+    except Exception as exc:
+        print('Ошибка text_formatting!')
+
+
+def check_text_formatting(indent, alignment, text, expected_value_first_line):
+    try:
+        if indent != 0 and alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
+            print(f'{text} ✕ (Отступ первой строки заголовка должен быть 0см!)')
+        elif round(indent.cm, 2) == expected_value_first_line or text == '':
+            return 0
+        elif indent == 0 and alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
+            return 0
+        else:
+            print(f'{text} ✕ (Отступ первой строки абзаца должен быть {expected_value_first_line}см!)')
+    except Exception as exc:
+        print('Ошибка check_text_formatting!')
+
+
 if __name__ == '__main__':
     try:
-        searchDocx()
+        search()
         for path in paths:
             doc = docx.Document(path)
-            propertiesDocx(doc, path)
-            marginDocx(doc)
-            # for paragraph in doc.paragraphs:
-            #     print(paragraph.alignment)
-            check_text_formatting(doc)
+            properties(doc, path)
+            margin(doc)
+            text_formatting(doc)
     except Exception as exc:
         print('Ошибка!')
