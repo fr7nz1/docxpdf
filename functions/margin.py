@@ -1,4 +1,5 @@
 def margin(file):
+    # выводит поля
     try:
         sections = file.sections
         print('Поля:')
@@ -13,6 +14,7 @@ def margin(file):
 
 
 def check_margin(margin, expected_value, name):
+    # проверяет поля
     try:
         if round(margin.cm, 1) == expected_value:
             print(f'{name} поле: {round(margin.cm, 1)}см ✓')
