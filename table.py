@@ -114,6 +114,7 @@ def check_sources_merged(file):
             if mask_title in paragraph.text:
                 comment = paragraph.add_comment('Кол-во источников и кол-во ссылок на источники не совпадает!')
                 comment.author = 'bot'
+                break
 
 
 def check_pic_merged(file):
@@ -133,6 +134,10 @@ def check_pic_merged(file):
             mask_pic = mask_template_pic.format(chislo=i)
 
     if piccount != linkpiccount: # пишем так, чтоб вывод был на поля 1 страницы
+        for paragraph in doc.paragraphs:
+            comment = paragraph.add_comment('Кол-во иллюстраций и кол-во ссылок на иллюстрации не совпадает!')
+            comment.author = 'bot'
+            break
 
 
 def check_table_merged(file):
@@ -152,7 +157,10 @@ def check_table_merged(file):
             mask = mask_template.format(chislo=i)
 
     if tablescount != linktablescount: # пишем так, чтоб вывод был на поля 1 страницы
-
+        for paragraph in doc.paragraphs:
+            comment = paragraph.add_comment('Кол-во таблиц и кол-во ссылок на таблицы не совпадает!')
+            comment.author = 'bot'
+            break
 
 
 # def check_links(tablescount, linktablescount, piccount, linkpiccount, sourcescount, linksourcecount):
