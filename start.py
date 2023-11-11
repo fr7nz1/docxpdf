@@ -29,10 +29,14 @@ if __name__ == '__main__':
             doc = docx.Document(path)
             properties(doc, path)
             functions.margin.margin(doc)
-            functions.formatting.text_formatting(doc)
-            functions.table.search_tables(doc)
-            functions.table.search_pic(doc)
+            functions.formatting.check_name_font('Times New Roman', doc.paragraphs)
+            functions.formatting.check_size_font(14.0, doc.paragraphs)
+            functions.formatting.check_heading(1.25, doc.paragraphs)
+            functions.formatting.check_first_line_indent(1.25, doc.paragraphs)
+            functions.formatting.check_line_spacing(1.5, doc.paragraphs)
+            functions.table.check_sources_merged(doc)
+            functions.table.check_pic_merged(doc)
+            functions.table.check_table_merged(doc)
             doc.save(path)
     except Exception as e:
         print('Ошибка!')
-
