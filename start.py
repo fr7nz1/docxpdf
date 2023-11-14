@@ -15,10 +15,9 @@ def search():
             paths.append(file)
 
 
-def properties(file, path):
-    # настройки дока
-    properties = file.core_properties
-    print('Наименование документа:', path)
+def names(path):
+    text = 'Наименование документа: ' + path
+    return text
 
 
 if __name__ == '__main__':
@@ -27,10 +26,12 @@ if __name__ == '__main__':
         search()
         for path in paths:
             doc = docx.Document(path)
-            properties(doc, path)
+            print(names(path))
             functions.margin.margin(doc)
+
+            functions.formatting.check_size_font(177800, doc.paragraphs)
             functions.formatting.check_name_font('Times New Roman', doc.paragraphs)
-            functions.formatting.check_size_font(14.0, doc.paragraphs)
+
             functions.formatting.check_heading(1.25, doc.paragraphs)
             functions.formatting.check_first_line_indent(1.25, doc.paragraphs)
             functions.formatting.check_line_spacing(1.5, doc.paragraphs)

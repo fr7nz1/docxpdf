@@ -41,9 +41,10 @@ def check_size_font(expected_value, paragraphs):
     try:
         for paragraph in paragraphs:
             for run in paragraph.runs:
-                if round(run.font.size.pt, 1) != expected_value:
-                    comment = paragraph.add_comment('Размер шрифта должен быть 14пт!')
-                    comment.author = 'bot'
+                if run.font.size is not None:
+                    if run.font.size != expected_value:
+                         comment = paragraph.add_comment('Размер шрифта должен быть 14пт!')
+                         comment.author = 'bot'
     except Exception as exc:
         print('Ошибка check_size_font!')
 
@@ -54,18 +55,25 @@ def check_first_line_indent(expected_value_first_line, paragraphs):
         for paragraph in paragraphs:
             formatting = paragraph.paragraph_format
             indent = formatting.first_line_indent
-            if indent.cm == 0.0 and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
-                # Если отступ равен 0 и текст по центру
-                return 0
-            elif indent.cm != 0.0 and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
-                comment = paragraph.add_comment(f'Отступ строки должен быть 0см!')
-                comment.author = 'bot'
-            elif round(indent.cm, 2) == expected_value_first_line and paragraph.alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
-                # Если отступ равен введённому знаичению
-                return 0
-            elif round(indent.cm, 2) != expected_value_first_line and paragraph.alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
-                comment = paragraph.add_comment(f'Отступ первой строки абзаца должен быть {expected_value_first_line}см!')
-                comment.author = 'bot'
+            if indent is not None:
+                if round(indent.cm, 2) != expected_value_first_line and paragraph.alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
+                    comment = paragraph.add_comment(f'Отступ первой строки абзаца должен быть {expected_value_first_line}см!')
+                    comment.author = 'bot'
+                elif paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
+                    comment = paragraph.add_comment(f'Отступ строки должен быть 0см!')
+                    comment.author = 'bot'
+                # elif indent.cm != 0.0 and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER:
+                #     comment = paragraph.add_comment(f'Отступ строки должен быть 0см!')
+                #     comment.author = 'bot'
+                # elif round(indent.cm, 2) == expected_value_first_line and paragraph.alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
+                #     # Если отступ равен введённому знаичению
+                #     return 0
+                # elif round(indent.cm, 2) != expected_value_first_line and paragraph.alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
+                #     comment = paragraph.add_comment(f'Отступ первой строки абзаца должен быть {expected_value_first_line}см!')
+                #     comment.author = 'bot'
+                # elif run.text.lower() != run.text and (run.bold or not run.bold) and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER and round(indent.cm, 2) == expected_value_first_line:
+                #     comment = paragraph.add_comment(f'Отступ должен быть 0см!')
+                #     comment.author = 'bot'
     except Exception as exc:
         print('Ошибка check_first_line_indent!')
 
@@ -94,9 +102,9 @@ def check_heading(expected_value_first_line, paragraphs):
                 if run.text.lower() != run.text and run.bold and paragraph.alignment != WD_PARAGRAPH_ALIGNMENT.CENTER:
                     comment = paragraph.add_comment(f'Выравнивание должно быть по центру!')
                     comment.author = 'bot'
-                if run.text.lower() != run.text and run.bold and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER and round(indent.cm, 2) == expected_value_first_line:
-                    comment = paragraph.add_comment(f'Отступ должен быть 0см!')
-                    comment.author = 'bot'
+                # if run.text.lower() != run.text and run.bold and paragraph.alignment == WD_PARAGRAPH_ALIGNMENT.CENTER and round(indent.cm, 2) == expected_value_first_line:
+                #     comment = paragraph.add_comment(f'Отступ должен быть 0см!')
+                #     comment.author = 'bot'
     except Exception as exc:
         print('Ошибка check_heading!')
 
