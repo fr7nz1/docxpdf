@@ -113,73 +113,123 @@ def check_sources_merged(file):
     mask_template_link_sources = """[{chislo}]"""
     mask_link_sources = mask_template_link_sources.format(chislo=j)
 
-    for paragraph in doc.paragraphs:
+    for paragraph in doc.paragraphs:    # Доходим до заголовка Список литературы
         if mask_title in paragraph.text:
             flag = True
-
-        if flag == True:
+        if flag == True:    # Считаем количество источников
             if paragraph.style.name == 'List Paragraph':
                 sourcescount += 1
-        elif mask_link_sources in paragraph.text:
-            linksourcecount += 1
-            j += 1
-            mask_link_sources = mask_template_link_sources.format(chislo=j)
 
-    if sourcescount != linksourcecount:
-        for paragraph in doc.paragraphs:
-            if mask_title in paragraph.text:
-                comment = paragraph.add_comment('Кол-во источников и кол-во ссылок на источники не совпадает!')
+    spisok = []
+    for i in range(1, sourcescount + 1):
+        spisok.append(0)
+
+    for paragraph in doc.paragraphs:
+        j = 1
+        mask_link_sources = mask_template_link_sources.format(chislo=j)
+        for i in range(1, sourcescount + 1):
+            if mask_link_sources in paragraph.text:
+                linksourcecount += 1
+                spisok[i - 1] = i
+                j += 1
+                mask_link_sources = mask_template_link_sources.format(chislo=j)
+            else:
+                j += 1
+                mask_link_sources = mask_template_link_sources.format(chislo=j)
+
+    for paragraph in doc.paragraphs:
+        s = 0
+        for i in spisok:
+            s += 1
+            if i == 0:
+                comment = paragraph.add_comment("Отсутствует ссылка на источник:", str(s))
                 comment.author = 'bot'
-                break
+                print("Отсутствует ссылка на источник:", s)
+        break
     # print(sourcescount, linksourcecount)
+    # print(spisok)
 
 
 def check_pic_merged(file):
     piccount = 0
     linkpiccount = 0
-    i = 1
+    j = 1
     mask_template_pic = """Рисунок {chislo} –"""  # Задаем маску для последующей проверки по ней
-    mask_pic = mask_template_pic.format(chislo=i)  # Добавляет переменную в маску
-    # Проходит по всем иллюстрациям в документе
-    for shape in doc.inline_shapes:
+    mask_pic = mask_template_pic.format(chislo=j)  # Добавляет переменную в маску
+
+    for shape in doc.inline_shapes:     # Проходит по всем иллюстрациям в документе
         piccount += 1
         pass
-    for paragraph in doc.paragraphs:  # Проходит по всем абзацам
-        if mask_pic in paragraph.text:  # Проверяет есть ли маска в тексте
-            linkpiccount += 1
-            i += 1
-            mask_pic = mask_template_pic.format(chislo=i)
 
-    if piccount != linkpiccount:
-        for paragraph in doc.paragraphs:    # пишем так, чтоб вывод был на поля 1 страницы
-            comment = paragraph.add_comment('Кол-во иллюстраций и кол-во ссылок на иллюстрации не совпадает!')
-            comment.author = 'bot'
-            break
+    spisok = []
+    for i in range(1, piccount + 1):
+        spisok.append(0)
+
+    for paragraph in doc.paragraphs:
+        j = 1
+        mask_pic = mask_template_pic.format(chislo=j)
+        for i in range(1, piccount + 1):
+            if mask_pic in paragraph.text:
+                linkpiccount += 1
+                spisok[i - 1] = i
+                j += 1
+                mask_pic = mask_template_pic.format(chislo=j)
+            else:
+                j += 1
+                mask_pic = mask_template_pic.format(chislo=j)
+
+    for paragraph in doc.paragraphs:
+        s = 0
+        for i in spisok:
+            s += 1
+            if i == 0:
+                comment = paragraph.add_comment("Отсутствует ссылка на иллюстрацию:", str(s))
+                comment.author = 'bot'
+                print("Отсутствует ссылка на иллюстрацию:", s)
+        break
     # print(piccount, linkpiccount)
+    # print(spisok)
 
 
 def check_table_merged(file):
     tablescount = 0
     linktablescount = 0
-    i = 1
+    j = 1
     mask_template = """Таблица {chislo} –"""  # Задаем маску для последующей проверки по ней
-    mask = mask_template.format(chislo=i)  # Добавляет переменную в маску
-    # Проходим по всем таблицам в документе
-    for table in doc.tables:  # for table in doc.tables[1:]:
+    mask = mask_template.format(chislo=j)  # Добавляет переменную в маску
+
+    for table in doc.tables:  # for table in doc.tables[1:]:    # Проходим по всем таблицам в документе
         tablescount += 1
         pass
-    for paragraph in doc.paragraphs:  # Проходит по всем абзацам
-        if mask in paragraph.text:  # Проверяет есть ли маска в тексте
-            linktablescount += 1
-            i += 1
-            mask = mask_template.format(chislo=i)
 
-    if tablescount != linktablescount:  # Если на титульном листе будут таблицы, то к ним не идут ссылки.
-        for paragraph in doc.paragraphs:
-            comment = paragraph.add_comment('Кол-во таблиц и кол-во ссылок на таблицы не совпадает!')
-            comment.author = 'bot'
-            break
+    spisok = []
+    for i in range(1, tablescount + 1):
+        spisok.append(0)
+
+    for paragraph in doc.paragraphs:
+        j = 1
+        mask = mask_template.format(chislo=j)
+        for i in range(1, tablescount + 1):
+            if mask in paragraph.text:
+                linktablescount += 1
+                spisok[i - 1] = i
+                j += 1
+                mask = mask_template.format(chislo=j)
+            else:
+                j += 1
+                mask = mask_template.format(chislo=j)
+
+    for paragraph in doc.paragraphs:
+        s = 0
+        for i in spisok:
+            s += 1
+            if i == 0:
+                comment = paragraph.add_comment("Отсутствует ссылка на таблицу:", str(s))
+                comment.author = 'bot'
+                print("Отсутствует ссылка на таблицу:", s)
+        break
     # print(tablescount, linktablescount)
+    # print(spisok)
 
 
 def bot_comment(paragraph, TEXT: str):
@@ -197,9 +247,6 @@ def check_block(file):
     vvedenie = False
     mask_vvedenie = """ВВЕДЕНИЕ"""
 
-    osnov_chasti = False
-    mask_osnov_chasti = """ОСНОВНАЯ ЧАСТЬ"""
-
     zakluchenie = False
     mask_zakluchenie = """ЗАКЛЮЧЕНИЕ"""
 
@@ -216,9 +263,6 @@ def check_block(file):
                 # print(paragraph.text)
             elif mask_vvedenie in paragraph.text:
                 vvedenie = True
-                # print(paragraph.text)
-            elif mask_osnov_chasti in paragraph.text:
-                osnov_chasti = True
                 # print(paragraph.text)
             elif mask_zakluchenie in paragraph.text:
                 zakluchenie = True
@@ -251,12 +295,6 @@ def check_block(file):
             bot_comment(paragraph, "Блок ВВЕДЕНИЕ отсутствует!")
             break
         print("Блок ВВЕДЕНИЕ отсутствует!")
-
-    if (osnov_chasti != True):
-        for paragraph in doc.paragraphs:
-            bot_comment(paragraph, "Блок ОСНОВНАЯ ЧАСТЬ отсутствует!")
-            break
-        print("Блок ОСНОВНАЯ ЧАСТЬ отсутствует!")
 
     if (zakluchenie != True):
         for paragraph in doc.paragraphs:
